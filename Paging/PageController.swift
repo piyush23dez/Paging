@@ -12,7 +12,7 @@ private let reuseIdentifier = "Cell"
 
 class PageController: UICollectionViewController , UICollectionViewDelegateFlowLayout {
     var currentCardIndex = 0
-    var totalPages = 6
+    var totalPages = 20
     var cardsCount = 2
     let spacing = 20
         
@@ -82,12 +82,7 @@ class PageController: UICollectionViewController , UICollectionViewDelegateFlowL
             //when dragging too much left side beyond left boundary
             var targetCardIndex = max(Int(xTarget/CGFloat(offset))-cardsSlotCount, 0)
          
-            if cardsSlotCount%2 == 0 {
-                //check while dragging, snapping card index shound not be odd index, if yes then goto neaerest left card
-                targetCardIndex = targetCardIndex%2 == 0 ? targetCardIndex : targetCardIndex-1
-            }
-           
-            //check if user swipes fast and target index is way ahead than the current, rerset to current-2
+            //check if user swipes fast and target index is way ahead than the current, rerset to current-cardsSlotCount
             targetCardIndex = min(max(targetCardIndex, currentCardIndex-cardsSlotCount), totalPages-cardsSlotCount)
             
             //set targetCardIndex to current card index
@@ -98,17 +93,11 @@ class PageController: UICollectionViewController , UICollectionViewDelegateFlowL
             targetContentOffset.pointee.x = newTarget
         } else {
            print("right")
-            
             if totalPages-cardsCount == currentCardIndex { return }
             
             var targetCardIndex = Int(xTarget/CGFloat(offset))+cardsSlotCount
-            
-            if cardsSlotCount%2 == 0 {
-                //check while dragging, snapping card index shound not be odd index, if yes then goto neaerest right card
-                targetCardIndex = targetCardIndex%2 == 0 ? targetCardIndex : targetCardIndex+1
-            }
-            
-            //check if user swipes fast and target index is way ahead than the current, rerset to current+2
+                        
+            //check if user swipes fast and target index is way ahead than the current, rerset to current+cardsCount
             targetCardIndex = min(min(targetCardIndex, currentCardIndex+cardsSlotCount), totalPages-cardsSlotCount)
             
             //set targetCardIndex to current card index
@@ -119,7 +108,4 @@ class PageController: UICollectionViewController , UICollectionViewDelegateFlowL
             targetContentOffset.pointee.x = newTargetOffsetX
         }
     }
-
-    // Velocity is measured in points per millisecond.
-    private var snapToMostVisibleColumnVelocityThreshold: CGFloat { return 0.3 }
 }
