@@ -14,6 +14,7 @@ class HomeCollectionController: UICollectionViewController, UICollectionViewDele
     override func viewDidLoad() {
         super.viewDidLoad()
         collectionView.backgroundColor = .green
+        collectionView.showsHorizontalScrollIndicator = false
         setup()
     }
     
