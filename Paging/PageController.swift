@@ -12,7 +12,7 @@ private let reuseIdentifier = "Cell"
 
 class PageController: UICollectionViewController , UICollectionViewDelegateFlowLayout {
     var currentCardIndex = 0
-    var totalPages = 20
+    var totalPages = 19 //odd
     var cardsCount = 2
     let spacing = 20
         
@@ -20,6 +20,7 @@ class PageController: UICollectionViewController , UICollectionViewDelegateFlowL
         super.viewDidLoad()
         collectionView.backgroundColor = .blue
         collectionView.decelerationRate = .fast
+        collectionView.showsHorizontalScrollIndicator = false
         collectionView.register(PageCell.self, forCellWithReuseIdentifier: reuseIdentifier)
     }
      
@@ -67,17 +68,22 @@ class PageController: UICollectionViewController , UICollectionViewDelegateFlowL
     }
     
     override func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+       
         let bounds = scrollView.bounds
         let xTarget = targetContentOffset.pointee.x
         let cardsSlotCount = cardsCount
         
-        //as we have two cards we divide the total width add padding b/w cards
-        let padding = CGFloat((cardsCount-1) * spacing)
+        //calculate spacing between cards based on cardsSlotCount
+        let padding = CGFloat((cardsSlotCount-1) * spacing)
+        
+        //calculate initial offset for single card based on padding and width
         let offset = (bounds.width-padding)/CGFloat(cardsSlotCount) + CGFloat(spacing)
-
-        if scrollView.panGestureRecognizer.translation(in: scrollView.superview).x >= 0 {
+        
+        //set default target offset x position as current card offset
+        var newTargetOffsetX = CGFloat(currentCardIndex) * offset
+        
+        if scrollView.panGestureRecognizer.translation(in: scrollView.superview).x > 0 {
             print("left")
-            if currentCardIndex == 0 { return }
             
             //when dragging too much left side beyond left boundary
             var targetCardIndex = max(Int(xTarget/CGFloat(offset))-cardsSlotCount, 0)
@@ -89,11 +95,10 @@ class PageController: UICollectionViewController , UICollectionViewDelegateFlowL
             currentCardIndex = targetCardIndex
             
             //calculate new target offset based on offset
-            let newTarget = CGFloat(targetCardIndex) * CGFloat(offset)
-            targetContentOffset.pointee.x = newTarget
-        } else {
+            newTargetOffsetX = CGFloat(targetCardIndex) * CGFloat(offset)
+            targetContentOffset.pointee.x = newTargetOffsetX
+        } else if scrollView.panGestureRecognizer.translation(in: scrollView.superview).x < 0 {
            print("right")
-            if totalPages-cardsCount == currentCardIndex { return }
             
             var targetCardIndex = Int(xTarget/CGFloat(offset))+cardsSlotCount
                         
@@ -104,7 +109,10 @@ class PageController: UICollectionViewController , UICollectionViewDelegateFlowL
             currentCardIndex = targetCardIndex
             
             //calculate new target offset based on offset
-            let newTargetOffsetX = CGFloat(targetCardIndex) * offset
+            newTargetOffsetX = CGFloat(targetCardIndex) * offset
+            targetContentOffset.pointee.x = newTargetOffsetX
+        } else {
+            print("current")
             targetContentOffset.pointee.x = newTargetOffsetX
         }
     }
