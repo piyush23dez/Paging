@@ -12,7 +12,7 @@ private let reuseIdentifier = "Cell"
 
 class PageController: UICollectionViewController , UICollectionViewDelegateFlowLayout {
     var currentCardIndex = 0
-    var totalPages = 19 //odd
+    var totalPages = 19
     var cardsCount = 2
     let spacing = 20
         
@@ -68,7 +68,7 @@ class PageController: UICollectionViewController , UICollectionViewDelegateFlowL
     }
     
     override func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-       
+        let layout = collectionViewLayout as! UICollectionViewFlowLayout
         let bounds = scrollView.bounds
         let xTarget = targetContentOffset.pointee.x
         let cardsSlotCount = cardsCount
@@ -80,10 +80,17 @@ class PageController: UICollectionViewController , UICollectionViewDelegateFlowL
         let offset = (bounds.width-padding)/CGFloat(cardsSlotCount) + CGFloat(spacing)
         
         //set default target offset x position as current card offset
-        var newTargetOffsetX = CGFloat(currentCardIndex) * offset
-        
+        var pageX = CGFloat(currentCardIndex) * offset
+
         if scrollView.panGestureRecognizer.translation(in: scrollView.superview).x > 0 {
             print("left")
+            
+            //check if dragged card disance is more than half card then only goto previous page
+            let draggingX = pageX - offset/2
+            if xTarget > draggingX && abs(velocity.x) <= snapToMostVisibleColumnVelocityThreshold {
+                targetContentOffset.pointee.x = pageX
+                return
+            }
             
             //when dragging too much left side beyond left boundary
             var targetCardIndex = max(Int(xTarget/CGFloat(offset))-cardsSlotCount, 0)
@@ -95,10 +102,18 @@ class PageController: UICollectionViewController , UICollectionViewDelegateFlowL
             currentCardIndex = targetCardIndex
             
             //calculate new target offset based on offset
-            newTargetOffsetX = CGFloat(targetCardIndex) * CGFloat(offset)
-            targetContentOffset.pointee.x = newTargetOffsetX
+            pageX = CGFloat(targetCardIndex) * CGFloat(offset)
+            targetContentOffset.pointee.x = pageX
+            
         } else if scrollView.panGestureRecognizer.translation(in: scrollView.superview).x < 0 {
            print("right")
+            
+            //check if dragged card disance is more than half card then only goto next page
+            let draggingX = pageX + offset/2
+            if xTarget < draggingX && abs(velocity.x) <= snapToMostVisibleColumnVelocityThreshold {
+                targetContentOffset.pointee.x = pageX
+                return
+            }
             
             var targetCardIndex = Int(xTarget/CGFloat(offset))+cardsSlotCount
                         
@@ -109,11 +124,14 @@ class PageController: UICollectionViewController , UICollectionViewDelegateFlowL
             currentCardIndex = targetCardIndex
             
             //calculate new target offset based on offset
-            newTargetOffsetX = CGFloat(targetCardIndex) * offset
-            targetContentOffset.pointee.x = newTargetOffsetX
+            pageX = CGFloat(targetCardIndex) * offset
+            targetContentOffset.pointee.x = pageX
         } else {
             print("current")
-            targetContentOffset.pointee.x = newTargetOffsetX
+            targetContentOffset.pointee.x = pageX
         }
     }
+    
+    // Velocity is measured in points per millisecond.
+       private var snapToMostVisibleColumnVelocityThreshold: CGFloat { return 0.3 }
 }
