@@ -11,7 +11,7 @@ import UIKit
 class HomeCollectionController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     let cellId = "cellId"
     
-       override func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
         collectionView.backgroundColor = .green
         setup()
@@ -50,9 +50,9 @@ class HomeCollectionController: UICollectionViewController, UICollectionViewDele
         }
         flowLayout.invalidateLayout()
     }
-       
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: view.frame.width, height: 350)
+        return CGSize(width: view.bounds.size.width, height: view.bounds.size.height * 0.3)
     }    
 }
 
