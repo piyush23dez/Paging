@@ -12,7 +12,7 @@ private let reuseIdentifier = "Cell"
 
 class PageController: UICollectionViewController , UICollectionViewDelegateFlowLayout {
     var currentCardIndex = 0
-    var totalPages = 19
+    var totalPages = 6
     var cardsCount = 2
     let spacing = 20
         
@@ -68,7 +68,6 @@ class PageController: UICollectionViewController , UICollectionViewDelegateFlowL
     }
     
     override func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        let layout = collectionViewLayout as! UICollectionViewFlowLayout
         let bounds = scrollView.bounds
         let xTarget = targetContentOffset.pointee.x
         let cardsSlotCount = cardsCount

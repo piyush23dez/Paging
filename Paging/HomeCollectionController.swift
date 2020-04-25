@@ -53,7 +53,7 @@ class HomeCollectionController: UICollectionViewController, UICollectionViewDele
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: view.bounds.size.width, height: view.bounds.size.height * 0.3)
+        return CGSize(width: view.bounds.size.width, height: view.bounds.size.height * 0.33)
     }    
 }
 

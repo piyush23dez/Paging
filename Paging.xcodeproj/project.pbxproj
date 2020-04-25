@@ -45,6 +45,7 @@
 			isa = PBXGroup;
 			children = (
 				4B34D4B32450FB0600855734 /* Paging */,
+				4B34D4D5245105F900855734 /* Support */,
 				4B34D4B22450FB0600855734 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -64,7 +65,6 @@
 				4B34D4B62450FB0600855734 /* SceneDelegate.swift */,
 				4B34D4CC2451020F00855734 /* HomeCollectionController.swift */,
 				4B34D4C22450FB0800855734 /* Info.plist */,
-				4B34D4D5245105F900855734 /* Support */,
 				4B34D4C82450FC5900855734 /* PageController.swift */,
 				4B34D4CA2450FC6F00855734 /* PageCell.swift */,
 				4B34D4D3245105B300855734 /* HomeCell.swift */,
