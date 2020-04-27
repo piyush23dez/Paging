@@ -12,9 +12,11 @@ private let reuseIdentifier = "Cell"
 
 class PageController: UICollectionViewController , UICollectionViewDelegateFlowLayout {
     var currentCardIndex = 0
-    var totalPages = 6
+    var totalPages = 19
     var cardsCount = 2
     let spacing = 20
+    let minWidth = 314
+        
         
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -63,8 +65,12 @@ class PageController: UICollectionViewController , UICollectionViewDelegateFlowL
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let padding = (cardsCount-1) * spacing
-        return CGSize(width: ((collectionView.frame.size.width-CGFloat((padding)))/CGFloat(cardsCount)), height: collectionView.frame.size.height)
+        let numberOfCardsToFit = Int(collectionView.frame.size.width/CGFloat(minWidth))
+        let remainingWidth = collectionView.frame.size.width - (CGFloat((numberOfCardsToFit-1) * spacing))
+        let totalCardsWidth = remainingWidth - (CGFloat(minWidth) * CGFloat(numberOfCardsToFit))
+        let eachCardWidth = totalCardsWidth/CGFloat(numberOfCardsToFit) + CGFloat(minWidth)
+        
+        return CGSize(width: eachCardWidth, height: collectionView.frame.size.height)
     }
     
     override func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
