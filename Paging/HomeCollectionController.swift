@@ -15,6 +15,7 @@ class HomeCollectionController: UICollectionViewController, UICollectionViewDele
         super.viewDidLoad()
         collectionView.backgroundColor = .green
         collectionView.showsHorizontalScrollIndicator = false
+
         setup()
     }
     
@@ -53,7 +54,7 @@ class HomeCollectionController: UICollectionViewController, UICollectionViewDele
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: view.bounds.size.width, height: view.bounds.size.height * 0.33)
+        return CGSize(width: view.bounds.size.width, height: view.bounds.size.height * 0.28)
     }    
 }
 

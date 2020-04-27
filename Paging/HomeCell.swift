@@ -8,16 +8,6 @@
 
 import UIKit
 
-class VC: UIViewController {
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        print("yes")
-    }
-    
-    override func viewDidLoad() {
-        
-    }
-}
-
 class HomeCell: UICollectionViewCell {
     var vc = PageController()
     let layout = UICollectionViewFlowLayout()

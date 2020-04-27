@@ -13,10 +13,12 @@ private let reuseIdentifier = "Cell"
 class PageController: UICollectionViewController , UICollectionViewDelegateFlowLayout {
     var currentCardIndex = 0
     var totalPages = 19
-    var cardsCount = 2
     let spacing = 20
-    let minWidth = 314
-        
+    let minWidth: CGFloat = 314
+    let peekingWidth: CGFloat = 20
+    var pageIndicators: CGFloat {
+        return CGFloat(Int(totalPages/numberOfCards)+totalPages%numberOfCards)
+    }
         
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,6 +55,10 @@ class PageController: UICollectionViewController , UICollectionViewDelegateFlowL
         return totalPages
     }
 
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return .zero
+    }
+    
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as? PageCell
         cell?.textLabel.text = "\(indexPath.item)"
@@ -64,22 +70,43 @@ class PageController: UICollectionViewController , UICollectionViewDelegateFlowL
         return CGFloat(spacing)
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    var numberOfCards: Int {
         let numberOfCardsToFit = Int(collectionView.frame.size.width/CGFloat(minWidth))
-        let remainingWidth = collectionView.frame.size.width - (CGFloat((numberOfCardsToFit-1) * spacing))
+        return numberOfCardsToFit
+    }
+    
+    var peekingOffset: CGFloat {
+        return (shouldPeak ? (peekingWidth*2) : 0)
+    }
+    
+    var fittingBoxWidth: CGFloat {
+        return collectionView.frame.size.width - peekingOffset
+    }
+    
+    var shouldPeak: Bool {
+        return numberOfCards == 1
+    }
+    
+    var resizedWidth: CGFloat {
+        let numberOfCardsToFit = Int(fittingBoxWidth/CGFloat(minWidth))
+        let remainingWidth = fittingBoxWidth - (CGFloat((numberOfCardsToFit-1) * spacing))
         let totalCardsWidth = remainingWidth - (CGFloat(minWidth) * CGFloat(numberOfCardsToFit))
         let eachCardWidth = totalCardsWidth/CGFloat(numberOfCardsToFit) + CGFloat(minWidth)
-        
-        return CGSize(width: eachCardWidth, height: collectionView.frame.size.height)
+        return eachCardWidth
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let w = min(resizedWidth, fittingBoxWidth)
+        return CGSize(width: w, height: collectionView.frame.size.height)
     }
     
     override func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         let bounds = scrollView.bounds
         let xTarget = targetContentOffset.pointee.x
-        let cardsSlotCount = cardsCount
+        let cardsSlotCount = numberOfCards
         
         //calculate spacing between cards based on cardsSlotCount
-        let padding = CGFloat((cardsSlotCount-1) * spacing)
+        let padding = CGFloat((cardsSlotCount-1) * spacing) + peekingOffset
         
         //calculate initial offset for single card based on padding and width
         let offset = (bounds.width-padding)/CGFloat(cardsSlotCount) + CGFloat(spacing)
@@ -138,5 +165,5 @@ class PageController: UICollectionViewController , UICollectionViewDelegateFlowL
     }
     
     // Velocity is measured in points per millisecond.
-       private var snapToMostVisibleColumnVelocityThreshold: CGFloat { return 0.3 }
+    private var snapToMostVisibleColumnVelocityThreshold: CGFloat { return 0.3 }
 }
