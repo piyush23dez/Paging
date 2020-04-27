@@ -88,7 +88,7 @@ class PageController: UICollectionViewController , UICollectionViewDelegateFlowL
     }
     
     var resizedWidth: CGFloat {
-        let numberOfCardsToFit = Int(fittingBoxWidth/CGFloat(minWidth))
+        let numberOfCardsToFit = max(Int(fittingBoxWidth/CGFloat(minWidth)), 1)
         let remainingWidth = fittingBoxWidth - (CGFloat((numberOfCardsToFit-1) * spacing))
         let totalCardsWidth = remainingWidth - (CGFloat(minWidth) * CGFloat(numberOfCardsToFit))
         let eachCardWidth = totalCardsWidth/CGFloat(numberOfCardsToFit) + CGFloat(minWidth)
@@ -96,8 +96,7 @@ class PageController: UICollectionViewController , UICollectionViewDelegateFlowL
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let w = min(resizedWidth, fittingBoxWidth)
-        return CGSize(width: w, height: collectionView.frame.size.height)
+        return CGSize(width: resizedWidth, height: collectionView.frame.size.height)
     }
     
     override func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
