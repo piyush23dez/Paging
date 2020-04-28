@@ -12,10 +12,44 @@ private let reuseIdentifier = "Cell"
 
 class PageController: UICollectionViewController , UICollectionViewDelegateFlowLayout {
     var currentCardIndex = 0
-    var totalPages = 19
+    var totalPages = 4
     let spacing = 20
     let minWidth: CGFloat = 314
     let peekingWidth: CGFloat = 20
+    
+    var pageIndicatorIndex: Int {
+        return currentCardIndex/numberOfCards + currentCardIndex%numberOfCards
+    }
+    
+    var numberOfCards: Int {
+        let numberOfCardsToFit = Int(collectionView.frame.size.width/CGFloat(minWidth))
+        return max(min(numberOfCardsToFit, totalPages), 1)
+    }
+    
+    var peekingOffset: CGFloat {
+        return (shouldPeak ? (peekingWidth*2) : 0)
+    }
+    
+    var fittingBoxWidth: CGFloat {
+        return collectionView.frame.size.width - peekingOffset
+    }
+    
+    var shouldPeak: Bool {
+        return numberOfCards == 1
+    }
+    
+    var resizedWidth: CGFloat {
+        //calculate width afterremoving padding in b/w cards
+        let remainingWidth = fittingBoxWidth - (CGFloat((numberOfCards-1) * spacing))
+                
+        //calculate extra width to be added to the existing cards
+        let totalCardsWidth = remainingWidth - (CGFloat(minWidth) * CGFloat(numberOfCards))
+        
+        //calculate each card width by adding to min card width
+        let eachCardWidth = (totalCardsWidth/CGFloat(numberOfCards)) + CGFloat(minWidth)
+        return eachCardWidth
+    }
+        
     var pageIndicators: CGFloat {
         return CGFloat(Int(totalPages/numberOfCards)+totalPages%numberOfCards)
     }
@@ -68,31 +102,6 @@ class PageController: UICollectionViewController , UICollectionViewDelegateFlowL
    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return CGFloat(spacing)
-    }
-    
-    var numberOfCards: Int {
-        let numberOfCardsToFit = Int(collectionView.frame.size.width/CGFloat(minWidth))
-        return numberOfCardsToFit
-    }
-    
-    var peekingOffset: CGFloat {
-        return (shouldPeak ? (peekingWidth*2) : 0)
-    }
-    
-    var fittingBoxWidth: CGFloat {
-        return collectionView.frame.size.width - peekingOffset
-    }
-    
-    var shouldPeak: Bool {
-        return numberOfCards == 1
-    }
-    
-    var resizedWidth: CGFloat {
-        let numberOfCardsToFit = max(Int(fittingBoxWidth/CGFloat(minWidth)), 1)
-        let remainingWidth = fittingBoxWidth - (CGFloat((numberOfCardsToFit-1) * spacing))
-        let totalCardsWidth = remainingWidth - (CGFloat(minWidth) * CGFloat(numberOfCardsToFit))
-        let eachCardWidth = totalCardsWidth/CGFloat(numberOfCardsToFit) + CGFloat(minWidth)
-        return eachCardWidth
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
